@@ -3,33 +3,21 @@
  * Entry point for Render deployment
  */
 
-const { spawn } = require("child_process");
 const log = require("./logger/log.js");
 
-function startProject() {
-  console.log('[MAIN] Starting RENZ MESSENGER BOT V3...');
-  
-  // Start Goat.js (main process)
-  const child = spawn("node", ["Goat.js"], {
-    cwd: __dirname,
-    stdio: "inherit",
-    shell: true,
-    env: {
-      ...process.env,
-      IS_MAIN_PROCESS: 'true'
+async function startProject() {
+    console.log('[MAIN] Starting RENZ MESSENGER BOT V3...');
+    try {
+        // Import and immediately invoke the dashboard app
+        const dashboardApp = require("./dashboard/app.js");
+        // Pass null or undefined for the 'api' parameter as it's not needed for startup
+        await dashboardApp(null);
+        console.log('[MAIN] Dashboard started successfully.');
+    } catch (error) {
+        console.error('[MAIN] Failed to start dashboard:', error);
+        log.error(`Project exited with error: ${error.message}`);
+        setTimeout(() => startProject(), 5000);
     }
-  });
-
-  child.on("close", (code) => {
-    console.log(`[MAIN] Goat.js exited with code ${code}`);
-    if (code == 2) {
-      log.info("Restarting Project...");
-      startProject();
-    } else if (code != 0) {
-      log.error(`Project exited with code ${code}`);
-      setTimeout(() => startProject(), 5000);
-    }
-  });
 }
 
 startProject();
