@@ -76,6 +76,52 @@ try {
 // ===== LOAD FIREBASE =====
 const { botModel } = require('./dashboard/firebase.js');
 
+// ================================================================
+// ===== DATABASE MODELS (for commands) =====
+// ================================================================
+let usersData = null;
+let threadsData = null;
+
+async function loadDatabaseModels() {
+    try {
+        // Try to load from database/controller (main database)
+        const dbController = require('./database/controller/index.js');
+        const db = await dbController(null);
+        usersData = db.usersData;
+        threadsData = db.threadsData;
+        console.log(`[BOT] Database models loaded from database/controller`);
+        return true;
+    } catch (err) {
+        console.warn(`[BOT] Failed to load from database/controller:`, err.message);
+    }
+
+    try {
+        // Try to load individual models
+        const usersModel = require('./database/models/users.js');
+        const threadsModel = require('./database/models/threads.js');
+        usersData = usersModel;
+        threadsData = threadsModel;
+        console.log(`[BOT] Database models loaded from database/models`);
+        return true;
+    } catch (err) {
+        console.warn(`[BOT] Failed to load from database/models:`, err.message);
+    }
+
+    // Fallback: dummy models (commands will work with limited functionality)
+    console.warn(`[BOT] Using fallback database models (no persistence)`);
+    usersData = {
+        get: async (id) => ({ money: 0, exp: 0, level: 1 }),
+        set: async (id, data) => data,
+        getAll: async () => []
+    };
+    threadsData = {
+        get: async (id) => ({ members: [], adminIDs: [] }),
+        set: async (id, data) => data,
+        getAll: async () => []
+    };
+    return true;
+}
+
 // ===== LOGIN FUNCTION =====
 async function loginBot() {
     try {
@@ -145,6 +191,9 @@ async function loginBot() {
         // Mark bot as running in Firebase
         await botModel.update(BOT_ID, { running: true });
 
+        // ===== LOAD DATABASE MODELS =====
+        await loadDatabaseModels();
+
         // ===== LOAD COMMANDS =====
         await loadCommands(api);
 
@@ -171,12 +220,11 @@ async function loginBot() {
 // ================================================================
 
 async function loadCommands(api) {
-    // List of possible command folder paths (in order of priority)
     const possiblePaths = [
-        path.join(__dirname, 'scripts', 'cmds'),    // Your actual location
-        path.join(__dirname, 'commands'),           // Alternative
-        path.join(__dirname, 'cmds'),               // Alternative
-        path.join(__dirname, 'bot', 'commands')     // Alternative
+        path.join(__dirname, 'scripts', 'cmds'),
+        path.join(__dirname, 'commands'),
+        path.join(__dirname, 'cmds'),
+        path.join(__dirname, 'bot', 'commands')
     ];
 
     let foundPath = null;
@@ -203,7 +251,6 @@ async function loadCommands(api) {
 
             const filePath = path.join(foundPath, file);
             try {
-                // Clear require cache to load fresh
                 delete require.cache[require.resolve(filePath)];
                 const command = require(filePath);
                 
@@ -341,20 +388,23 @@ async function handleEvent(api, event) {
             if (command) {
                 console.log(`[BOT] 🎯 Executing command: ${commandName} from ${event.senderID}`);
                 try {
+                    // ===== BUILD CONTEXT WITH DATABASE =====
                     const context = {
                         api,
                         event,
                         message: {
                             reply: async (text) => {
-                                console.log(`[BOT] 💬 Replying to ${event.senderID}: ${text?.substring(0, 50) || ''}`);
+                                // Ensure text is a string for logging
+                                const logText = typeof text === 'string' ? text.substring(0, 50) : '[non-string reply]';
+                                console.log(`[BOT] 💬 Replying to ${event.senderID}: ${logText}`);
                                 return api.sendMessage(text, event.threadID);
                             },
                             react: async (emoji) => {
                                 return api.setMessageReaction(emoji, event.messageID, event.threadID);
                             }
                         },
-                        usersData: null,  // If needed, load from database
-                        threadsData: null,
+                        usersData: usersData,    // Now defined
+                        threadsData: threadsData, // Now defined
                         args,
                         commandName
                     };
