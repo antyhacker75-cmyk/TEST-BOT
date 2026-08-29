@@ -1,0 +1,3 @@
+{name} tried to escape? lol no one leaves here!
+
+{type}

@@ -1,0 +1,30 @@
+name: RENZ-MESSENGER-BOT-V3 Build (20.x)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧩 Checkout Source
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 📦 Initialize Dependencies
+        run: |
+          npm install
+          npm install request-promise --save
+
+      - name: 🚀 Launch Bot (V3)
+        env:
+          FB_EMAIL: ${{ secrets.FB_EMAIL }}
+          FB_PASSWORD: ${{ secrets.FB_PASSWORD }}
+          FB_COOKIE: ${{ secrets.FB_COOKIE }}
+        run: node index.js

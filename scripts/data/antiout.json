@@ -1,0 +1,28 @@
+{
+  "1475156826925138": {
+    "enabled": true,
+    "message": "🚫 {name} tried to leave — no escapes allowed!\n\n{type}",
+    "gif": "",
+    "reaction": ""
+  },
+  "9727590390638466": {
+    "enabled": true,
+    "message": "🚫 {name} tried to leave — no escapes allowed!\n\n{type}",
+    "gif": "",
+    "reaction": ""
+  },
+  "24776882701912833": {
+    "enabled": true,
+    "message": "🚫 {name} tried to leave — no escape allowed!\n\n{type}",
+    "gif": "",
+    "reaction": "",
+    "mode": "max"
+  },
+  "8313169058738704": {
+    "enabled": true,
+    "message": "🚫 {name} tried to leave — no escape allowed!\n\n{type}",
+    "gif": "",
+    "reaction": "",
+    "mode": "max"
+  }
+}

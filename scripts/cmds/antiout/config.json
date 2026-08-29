@@ -1,0 +1,10 @@
+{
+  "message": "custom",
+  "customMessage": "Welcome back {user}! You can't escape! 😈",
+  "antioutMessageType": "v1message",
+  "leaveMessageType": "default",
+  "gifEnabled": false,
+  "antioutEnabled": true,
+  "antioutCustomMessage": "",
+  "leaveEnabled": true
+}

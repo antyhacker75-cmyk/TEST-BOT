@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RENZ BOT – Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..900&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: #050508;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      animation: blobMove 20s ease-in-out infinite alternate;
+    }
+    .b1 {
+      width: 70vw;
+      height: 70vw;
+      background: radial-gradient(circle, rgba(124, 58, 237, .22), transparent 65%);
+      top: -20%;
+      left: -25%;
+      animation-duration: 22s;
+    }
+    .b2 {
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(6, 182, 212, .18), transparent 65%);
+      bottom: -25%;
+      right: -20%;
+      animation-duration: 28s;
+    }
+    .b3 {
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(236, 72, 153, .14), transparent 65%);
+      top: 35%;
+      right: 5%;
+      animation-duration: 18s;
+    }
+    @keyframes blobMove {
+      from { transform: translate(0,0) scale(1); }
+      to { transform: translate(5%,8%) scale(1.12); }
+    }
+    .auth-container {
+      position: relative;
+      z-index: 10;
+      background: rgba(10,10,20,0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(124,58,237,0.18);
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 60px rgba(124,58,237,0.07);
+    }
+    .auth-container .logo {
+      font-size: 32px;
+      margin-bottom: 4px;
+    }
+    .auth-container h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 10%, #c4b5fd 45%, #06b6d4 75%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .auth-container .sub { color: #64748b; font-size: 14px; margin-bottom: 32px; }
+    .auth-container .field-label {
+      font-size: 11px; font-weight: 800; letter-spacing: .12em;
+      text-transform: uppercase; color: #64748b;
+      display: block; margin-bottom: 6px;
+    }
+    .auth-container .field-inp {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px 16px;
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      outline: none;
+      transition: all .25s;
+      margin-bottom: 16px;
+    }
+    .auth-container .field-inp:focus {
+      border-color: rgba(124,58,237,0.6);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+    }
+    .auth-container .btn-primary {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff; box-shadow: 0 4px 24px rgba(124,58,237,0.45);
+      transition: all .28s; margin-top: 8px;
+    }
+    .auth-container .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(124,58,237,0.65); }
+    .auth-container .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .auth-container .switch { text-align: center; margin-top: 20px; color: #64748b; font-size: 14px; }
+    .auth-container .switch a { color: #a855f7; text-decoration: none; font-weight: 600; cursor: pointer; }
+    .auth-container .switch a:hover { color: #06b6d4; }
+    .auth-container .msg {
+      padding: 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;
+      margin-bottom: 16px; display: none;
+    }
+    .auth-container .msg.ok { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; display: block; }
+    .auth-container .msg.err { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; display: block; }
+    .auth-container .divider { display: flex; align-items: center; gap: 16px; margin: 20px 0; color: #334155; font-size: 12px; }
+    .auth-container .divider::before, .auth-container .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+    .auth-container .fb-login-btn {
+      width: 100%; padding: 14px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: #f8fafc; font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: all .28s; display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .auth-container .fb-login-btn:hover { border-color: rgba(124,58,237,0.5); background: rgba(124,58,237,0.1); }
+    .loading-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="bg">
+    <div class="bg-blob b1"></div>
+    <div class="bg-blob b2"></div>
+    <div class="bg-blob b3"></div>
+  </div>
+
+  <div class="auth-container">
+    <div class="logo">🤖</div>
+    <h1>RENZ BOT</h1>
+    <p class="sub" id="formSub">Sign in to your account</p>
+
+    <div id="msgBox" class="msg"></div>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <label class="field-label">Facebook ID</label>
+      <input type="text" id="loginFbid" class="field-inp" placeholder="e.g. 61593252647752" required />
+      <label class="field-label">Password</label>
+      <input type="password" id="loginPassword" class="field-inp" placeholder="Enter your password" required />
+      <button type="submit" class="btn-primary" id="loginBtn">Sign In</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display:none;" onsubmit="return handleRegister(event)">
+      <label class="field-label">Facebook ID</label>
+      <input type="text" id="registerFbid" class="field-inp" placeholder="e.g. 61593252647752" required />
+      <label class="field-label">Password</label>
+      <input type="password" id="registerPassword" class="field-inp" placeholder="Create a password (min 6 chars)" required minlength="6" />
+      <label class="field-label">Confirm Password</label>
+      <input type="password" id="registerConfirm" class="field-inp" placeholder="Confirm your password" required />
+      <button type="submit" class="btn-primary" id="registerBtn">Create Account</button>
+    </form>
+
+    <div class="switch">
+      <span id="switchText">Don't have an account?</span>
+      <a id="switchLink" onclick="toggleForm()">Register</a>
+    </div>
+
+    <div class="divider">or</div>
+
+    <button class="fb-login-btn" onclick="fbQuickLogin()">
+      <i class="fi fi-brands-facebook"></i> Quick Login with Facebook ID
+    </button>
+    <p style="font-size:11px;color:#334155;text-align:center;margin-top:12px;">
+      Quick Login works if you're already authenticated with this bot.
+    </p>
+  </div>
+
+  <script>
+    let isLogin = true;
+
+    function toggleForm() {
+      isLogin = !isLogin;
+      document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
+      document.getElementById('formSub').textContent = isLogin ? 'Sign in to your account' : 'Create a new account';
+      document.getElementById('switchText').textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
+      document.getElementById('switchLink').textContent = isLogin ? 'Register' : 'Sign In';
+      hideMsg();
+    }
+
+    function showMsg(type, text) {
+      const box = document.getElementById('msgBox');
+      box.className = 'msg ' + type;
+      box.textContent = text;
+      box.style.display = 'block';
+    }
+    function hideMsg() { document.getElementById('msgBox').style.display = 'none'; }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const fbid = document.getElementById('loginFbid').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('loginBtn');
+      if (!fbid || !password) { showMsg('err', 'Please fill in all fields.'); return; }
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Signing in...';
+      hideMsg();
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fbid, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showMsg('ok', '✅ Login successful! Redirecting...');
+          setTimeout(() => { window.location.href = `/dashboard/auth/${fbid}`; }, 1000);
+        } else {
+          showMsg('err', '❌ ' + (data.error || 'Login failed'));
+          btn.disabled = false;
+          btn.innerHTML = 'Sign In';
+        }
+      } catch (err) {
+        showMsg('err', '❌ Network error: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In';
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const fbid = document.getElementById('registerFbid').value.trim();
+      const password = document.getElementById('registerPassword').value.trim();
+      const confirm = document.getElementById('registerConfirm').value.trim();
+      const btn = document.getElementById('registerBtn');
+      if (!fbid || !password || !confirm) { showMsg('err', 'Please fill in all fields.'); return; }
+      if (password !== confirm) { showMsg('err', 'Passwords do not match.'); return; }
+      if (password.length < 6) { showMsg('err', 'Password must be at least 6 characters.'); return; }
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Creating account...';
+      hideMsg();
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fbid, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showMsg('ok', '✅ Account created! Please sign in.');
+          setTimeout(() => {
+            document.getElementById('loginFbid').value = fbid;
+            document.getElementById('loginPassword').value = password;
+            if (!isLogin) toggleForm();
+            btn.disabled = false;
+            btn.innerHTML = 'Create Account';
+          }, 500);
+        } else {
+          showMsg('err', '❌ ' + (data.error || 'Registration failed'));
+          btn.disabled = false;
+          btn.innerHTML = 'Create Account';
+        }
+      } catch (err) {
+        showMsg('err', '❌ Network error: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = 'Create Account';
+      }
+    }
+
+    async function fbQuickLogin() {
+      const fbid = prompt('Enter your Facebook ID:');
+      if (!fbid) return;
+      try {
+        const res = await fetch(`/api/auth/quick/${fbid}`);
+        const data = await res.json();
+        if (data.success) {
+          showMsg('ok', '✅ Logged in! Redirecting...');
+          setTimeout(() => { window.location.href = `/dashboard/auth/${fbid}`; }, 1000);
+        } else {
+          showMsg('err', '❌ ' + (data.error || 'Quick login failed. Please register first.'));
+        }
+      } catch (err) {
+        showMsg('err', '❌ Network error: ' + err.message);
+      }
+    }
+
+    // Check if already logged in via session
+    async function checkSession() {
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        if (data.loggedIn && data.fbid) {
+          window.location.href = `/dashboard/auth/${data.fbid}`;
+        }
+      } catch (e) { /* ignore */ }
+    }
+    checkSession();
+  </script>
+</body>
+</html>
